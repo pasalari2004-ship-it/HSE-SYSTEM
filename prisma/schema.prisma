@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Personnel {
+  id                  Int      @id @default(autoincrement())
+  personnelCode       String   @unique
+  fullName            String
+  nationalCode        String   @unique
+  mobile              String?
+  fatherName          String?
+  issuePlace          String?
+  birthDate           String?
+  gender              String?
+  maritalStatus       String?
+  childrenCount       Int?
+  education           String?
+  age                 Int?
+  height              Int?
+  bloodPressure       String?
+  diseaseType         String?
+  physicalFactors     String?
+  chemicalFactors     String?
+  biologicalFactors   String?
+  ergonomicFactors    String?
+  psychologicalFactors String?
+  hireDate            String?
+  settlementDate      String?
+  unit                String?
+  militaryStatus      String?
+  exemptionType       String?
+  workStation         String?
+  position            String?
+  assignedDuty        String?
+  shiftType           String?
+  shiftHours          String?
+  medicalFileNumber   String?
+  workConditions      String?
+  medicalAdvice       String?
+  workPhone           String?
+  workAddress         String?
+  postalCodeWorkplace String?
+  homePhone           String?
+  homePostalCode      String?
+  homeAddress         String?
+  hseExpertOpinion    String?
+  photoUrl            String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@map("personnel")
+}
