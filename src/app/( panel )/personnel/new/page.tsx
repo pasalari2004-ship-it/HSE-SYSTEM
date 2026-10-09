@@ -57,12 +57,26 @@ export default function PersonnelNewPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    console.log("اطلاعات ذخیره شد:", formData);
-    alert("اطلاعات با موفقیت ذخیره شد (نمایشی)");
-    router.push("/personnel");
+ async function handleSubmit(e: React.FormEvent) {
+  e.preventDefault();
+  try {
+    const response = await fetch("/api/personnel", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+    const result = await response.json();
+    if (result.success) {
+      alert("✅ اطلاعات با موفقیت ذخیره شد");
+      router.push("/personnel");
+    } else {
+      alert("❌ خطا: " + (result.error || "مشکل در ذخیره"));
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("❌ خطا در ارتباط با سرور");
   }
+}
 
   const inputClass =
     "w-full rounded-xl border-2 border-[#e2e8f0] bg-slate-50 px-4 py-3 text-[14px] font-medium outline-none transition focus:border-[#2e7cc4] focus:bg-white focus:ring-4 focus:ring-[#2e7cc4]/10";
