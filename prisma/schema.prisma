@@ -8,50 +8,88 @@ datasource db {
 }
 
 model Personnel {
-  id                  Int      @id @default(autoincrement())
-  personnelCode       String   @unique
-  fullName            String
-  nationalCode        String   @unique
-  mobile              String?
-  fatherName          String?
-  issuePlace          String?
-  birthDate           String?
-  gender              String?
-  maritalStatus       String?
-  childrenCount       Int?
-  education           String?
-  age                 Int?
-  height              Int?
-  bloodPressure       String?
-  diseaseType         String?
-  physicalFactors     String?
-  chemicalFactors     String?
-  biologicalFactors   String?
-  ergonomicFactors    String?
+  id                   Int      @id @default(autoincrement())
+  personnelCode        String   @unique
+  fullName             String
+  nationalCode         String   @unique
+  mobile               String?
+  fatherName           String?
+  issuePlace           String?
+  birthDate            String?
+  gender               String?
+  maritalStatus        String?
+  childrenCount        Int?
+  education            String?
+  age                  Int?
+  height               Int?
+  bloodPressure        String?
+  diseaseType          String?
+  physicalFactors      String?
+  chemicalFactors      String?
+  biologicalFactors    String?
+  ergonomicFactors     String?
   psychologicalFactors String?
-  hireDate            String?
-  settlementDate      String?
-  unit                String?
-  militaryStatus      String?
-  exemptionType       String?
-  workStation         String?
-  position            String?
-  assignedDuty        String?
-  shiftType           String?
-  shiftHours          String?
-  medicalFileNumber   String?
-  workConditions      String?
-  medicalAdvice       String?
-  workPhone           String?
-  workAddress         String?
-  postalCodeWorkplace String?
-  homePhone           String?
-  homePostalCode      String?
-  homeAddress         String?
-  hseExpertOpinion    String?
-  photoUrl            String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  hireDate             String?
+  settlementDate       String?
+  unit                 String?
+  militaryStatus       String?
+  exemptionType        String?
+  workStation          String?
+  position             String?
+  assignedDuty         String?
+  shiftType            String?
+  shiftHours           String?
+  medicalFileNumber    String?
+  workConditions       String?
+  medicalAdvice        String?
+  workPhone            String?
+  workAddress          String?
+  postalCodeWorkplace  String?
+  homePhone            String?
+  homePostalCode       String?
+  homeAddress          String?
+  hseExpertOpinion     String?
+  photoUrl             String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   @@map("personnel")
+}
+
+model Interview {
+  id                   Int      @id @default(autoincrement())
+  fullName             String
+  position             String?
+  birthDate            String?
+  age                  Int?
+  unit                 String?
+  otherUnits           String?
+  diseaseHistory       String?
+  diseaseNotes         String?
+  accidentHistory      String?
+  accidentNotes        String?
+  safetyKnowledge      String?
+  hseCourses           String?
+  hseCoursesNotes      String?
+  sportsHistory        String?
+  sportsNotes          String?
+  physicalFitness      String?
+  smokingHistory       String?
+  smokingNotes         String?
+  fileStatus           String?
+  lastTestDate         String?
+  healthStatus         String?
+  height               Int?
+  weight               Int?
+  bmi                  String?
+  militaryStatus       String?
+  serviceField         String?
+  exemptionType        String?
+  hseOpinion           String?
+  notes                String?
+  interviewerName      String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("interviews")
 }
