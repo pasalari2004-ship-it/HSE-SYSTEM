@@ -10,6 +10,7 @@ interface Guideline {
   version: string | null;
   category: string;
   processOwner: string | null;
+  description: string | null;
   status: string;
   createdAt: string;
 }
