@@ -93,3 +93,22 @@ model Interview {
 
   @@map("interviews")
 }
+
+model Guideline {
+  id              Int      @id @default(autoincrement())
+  title           String
+  documentCode    String?
+  version         String?
+  category        String   @default("دستورالعمل")
+  processOwner    String?
+  approvalDate    String?
+  reviewDate      String?
+  description     String?
+  content         String?  @db.Text
+  fileUrl         String?
+  status          String   @default("فعال")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("guidelines")
+}

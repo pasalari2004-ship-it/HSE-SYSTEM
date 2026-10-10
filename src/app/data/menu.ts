@@ -42,7 +42,7 @@ export const menuData: MenuCategory[] = [
         title: "مدیریت حوادث",
         desc: "ثبت، پیگیری و تحلیل حوادث",
         submenu: [
-          { name: "دستورالعمل حوادث", icon: "📖" },
+          { name: "دستورالعمل حوادث", icon: "📖", href: "/accidents/guidelines" },
           { name: "ثبت حوادث و بیماری‌های شغلی", icon: "📝" },
           { name: "تجزیه و تحلیل حوادث", icon: "🔍" },
           { name: "شاخص حوادث", icon: "📊" },
