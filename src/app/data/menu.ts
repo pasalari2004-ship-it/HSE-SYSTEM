@@ -43,7 +43,7 @@ export const menuData: MenuCategory[] = [
         desc: "ثبت، پیگیری و تحلیل حوادث",
         submenu: [
           { name: "دستورالعمل حوادث", icon: "📖", href: "/accidents/guidelines" },
-          { name: "ثبت حوادث و بیماری‌های شغلی", icon: "📝" },
+          { name: "ثبت حوادث و بیماری‌های شغلی", icon: "📝", href: "/accidents/records" },
           { name: "تجزیه و تحلیل حوادث", icon: "🔍" },
           { name: "شاخص حوادث", icon: "📊" },
           { name: "تابلو حوادث", icon: "📋" },

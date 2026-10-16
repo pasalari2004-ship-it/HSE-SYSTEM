@@ -53,6 +53,8 @@ model Personnel {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
+  accidents            Accident[]
+
   @@map("personnel")
 }
 
@@ -111,4 +113,53 @@ model Guideline {
   updatedAt       DateTime @updatedAt
 
   @@map("guidelines")
+}
+
+model Accident {
+  id                    Int         @id @default(autoincrement())
+  accidentCode          String?     @unique
+
+  personnelCode         String?
+  personnel             Personnel?  @relation(fields: [personnelCode], references: [personnelCode])
+
+  victimName            String
+  birthDate             String?
+  hireDate              String?
+  job                   String?
+  workExperience        String?
+  education             String?
+  maritalStatus         String?
+  workLocation          String?
+
+  accidentDate          String?
+  accidentTime          String?
+  exactLocation         String?
+
+  injuredArea           String?
+
+  description           String?     @db.Text
+  result                String?     @db.Text
+  cause                 String?     @db.Text
+
+  hasTraining           String?
+  hasPPE                String?
+
+  witnesses             String?     @db.Text
+
+  supervisorReport      String?     @db.Text
+  supervisorName        String?
+
+  medicalActions        String?     @db.Text
+  outpatientTreatment   String?
+  hospitalReferral      String?
+  otherMedical          String?
+  sickLeaveDays         Int?
+  lostWorkHours         String?
+  medicalNotes          String?     @db.Text
+
+  status                String      @default("باز")
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  @@map("accidents")
 }
