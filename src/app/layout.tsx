@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "سیستم جامع HSE - پاکشو",
-  description: "سیستم مدیریت ایمنی، بهداشت و محیط زیست",
+  title: "سیستم جامع HSE - ایمن‌سازان هستی گستر",
+  description:
+    "سیستم جامع مدیریت ایمنی، بهداشت و محیط زیست - ایمن‌سازان هستی گستر",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

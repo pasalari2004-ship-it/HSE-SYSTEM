@@ -14,10 +14,14 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between bg-white px-8 py-3.5 shadow-[0_2px_20px_rgba(0,0,0,0.06)]">
       <div className="flex items-center gap-3.5 text-[17px] font-extrabold text-[#0f2c4c]">
-        <div className="flex h-[46px] w-[46px] items-center justify-center rounded-xl bg-gradient-to-br from-[#0f2c4c] to-[#2e7cc4] text-[22px] text-white shadow-md">
-          🛡
+        <div className="flex h-[46px] w-[46px] items-center justify-center overflow-hidden rounded-xl bg-white shadow-md">
+          <img
+            src="/logo.png"
+            alt="ایمن‌سازان هستی گستر"
+            className="h-full w-full object-contain"
+          />
         </div>
-        <span>سیستم جامع HSE - پاکشو</span>
+        <span>سیستم جامع HSE - ایمن‌سازان هستی گستر</span>
       </div>
 
       <div className="flex items-center gap-3">
