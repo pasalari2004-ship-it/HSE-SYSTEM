@@ -33,7 +33,7 @@ export default function LoginPage() {
           سیستم جامع HSE
         </h1>
         <p className="mb-8 text-center text-xs text-[#64748b]">
-          گروه صنعتی گلرنگ - پاکشو
+          ایمن سازان هستی گستر    - 
         </p>
 
         <div className="mb-4">

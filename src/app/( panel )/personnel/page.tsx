@@ -78,7 +78,7 @@ export default function PersonnelListPage() {
             👥 مشاهده اطلاعات پرسنلی
           </h1>
           <p className="text-[15px] text-[#64748b]">
-            لیست کارکنان ثبت‌شده - شرکت پاکشو
+            لیست کارکنان ثبت‌شده - شرکت ایمن سازان هستی گستر
           </p>
         </div>
         <Link

@@ -93,7 +93,7 @@ export default function PersonnelNewPage() {
             📝 ثبت اطلاعات پرسنلی
           </h1>
           <p className="text-[15px] text-[#64748b]">
-            فرم ثبت اطلاعات کارکنان - شرکت پاکشو
+            فرم ثبت اطلاعات کارکنان - شرکت ایمن سازان هستی گستر
           </p>
         </div>
         <div className="flex gap-3">

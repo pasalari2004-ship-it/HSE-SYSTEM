@@ -83,7 +83,7 @@ export default function GuidelinesListPage() {
             📄 دستورالعمل‌های حوادث
           </h1>
           <p className="text-[15px] text-[#64748b]">
-            مدیریت اسناد و دستورالعمل‌های HSE - شرکت پاکشو
+            مدیریت اسناد و دستورالعمل‌های HSE - ایمن سازان هستی گستر  
           </p>
         </div>
         <Link

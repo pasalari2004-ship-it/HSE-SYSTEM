@@ -97,7 +97,7 @@ export default function InterviewNewPage() {
             💬 ثبت مصاحبه شغلی
           </h1>
           <p className="text-[15px] text-[#64748b]">
-            فرم مصاحبه شغلی HSE - شرکت پاکشو
+            فرم مصاحبه شغلی HSE - شرکت ایمن سازان هستی گستر
           </p>
         </div>
         <div className="flex gap-3">

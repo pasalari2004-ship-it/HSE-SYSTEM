@@ -79,7 +79,7 @@ export default function InterviewListPage() {
             💬 لیست مصاحبه‌های شغلی
           </h1>
           <p className="text-[15px] text-[#64748b]">
-            مصاحبه‌های ثبت‌شده - شرکت پاکشو
+            مصاحبه‌های ثبت‌شده - شرکت ایمن سازان هستی گستر
           </p>
         </div>
         <Link
