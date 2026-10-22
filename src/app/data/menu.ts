@@ -30,6 +30,16 @@ export const menuData: MenuCategory[] = [
           { name: "مصاحبه شغلی", icon: "💬", href: "/personnel/interview" },
         ],
       },
+      {
+        id: "news",
+        icon: "📰",
+        title: "اخبار HSE",
+        desc: "اخبار و رویدادهای حوزه ایمنی، بهداشت و محیط زیست",
+        submenu: [
+          { name: "مشاهده اخبار", icon: "👁", href: "/news" },
+          { name: "افزودن خبر", icon: "📝", href: "/news/new" },
+        ],
+      },
     ],
   },
   {

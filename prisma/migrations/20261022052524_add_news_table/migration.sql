@@ -1,0 +1,13 @@
+-- CreateTable
+CREATE TABLE "news" (
+    "id" SERIAL NOT NULL,
+    "title" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "source" TEXT,
+    "imageUrl" TEXT,
+    "isPublished" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "news_pkey" PRIMARY KEY ("id")
+);
