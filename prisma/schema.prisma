@@ -7,8 +7,91 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  SUPER_ADMIN
+  COMPANY_ADMIN
+  HSE_MANAGER
+  UNIT_MANAGER
+}
+
+model Company {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  address     String?
+  logoUrl     String?
+  field       String?
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  users       User[]
+  modules     CompanyModule[]
+  personnel   Personnel[]
+  accidents   Accident[]
+  news        News[]
+  guidelines  Guideline[]
+
+  @@map("companies")
+}
+
+model CompanyModule {
+  id          Int      @id @default(autoincrement())
+  companyId   Int
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  moduleId    String
+  
+  @@unique([companyId, moduleId])
+  @@map("company_modules")
+}
+
+model User {
+  id           Int             @id @default(autoincrement())
+  username     String          @unique
+  passwordHash String
+  fullName     String
+  role         Role
+  companyId    Int?
+  company      Company?        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  unitName     String?
+  isActive     Boolean         @default(true)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  permissions  UserPermission[]
+  auditLogs    AuditLog[]
+
+  @@map("users")
+}
+
+model UserPermission {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleId   String
+  
+  @@unique([userId, moduleId])
+  @@map("user_permissions")
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String
+  entity     String?
+  entityId   Int?
+  details    String?  @db.Text
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
 model Personnel {
   id                   Int      @id @default(autoincrement())
+  companyId            Int?
+  company              Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
   personnelCode        String   @unique
   fullName             String
   nationalCode         String   @unique
@@ -98,6 +181,9 @@ model Interview {
 
 model Guideline {
   id              Int      @id @default(autoincrement())
+  companyId       Int?
+  company         Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
   title           String
   documentCode    String?
   version         String?
@@ -117,11 +203,12 @@ model Guideline {
 
 model Accident {
   id                    Int         @id @default(autoincrement())
+  companyId             Int?
+  company               Company?    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
   accidentCode          String?     @unique
-
   personnelCode         String?
   personnel             Personnel?  @relation(fields: [personnelCode], references: [personnelCode])
-
   victimName            String
   birthDate             String?
   hireDate              String?
@@ -130,25 +217,18 @@ model Accident {
   education             String?
   maritalStatus         String?
   workLocation          String?
-
   accidentDate          String?
   accidentTime          String?
   exactLocation         String?
-
   injuredArea           String?
-
   description           String?     @db.Text
   result                String?     @db.Text
   cause                 String?     @db.Text
-
   hasTraining           String?
   hasPPE                String?
-
   witnesses             String?     @db.Text
-
   supervisorReport      String?     @db.Text
   supervisorName        String?
-
   medicalActions        String?     @db.Text
   outpatientTreatment   String?
   hospitalReferral      String?
@@ -156,7 +236,6 @@ model Accident {
   sickLeaveDays         Int?
   lostWorkHours         String?
   medicalNotes          String?     @db.Text
-
   status                String      @default("باز")
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
@@ -166,6 +245,9 @@ model Accident {
 
 model News {
   id           Int      @id @default(autoincrement())
+  companyId    Int?
+  company      Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
   title        String
   content      String   @db.Text
   source       String?

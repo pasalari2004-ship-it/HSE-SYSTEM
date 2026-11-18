@@ -3,19 +3,40 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("hse");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleLogin() {
-    if (!username.trim()) {
-      alert("نام کاربری را وارد کنید");
-      return;
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const result = await signIn("credentials", {
+        username,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("نام کاربری یا رمز عبور اشتباه است");
+        setLoading(false);
+        return;
+      }
+
+      router.push("/dashboard");
+      router.refresh();
+    } catch (err) {
+      console.error(err);
+      setError("خطا در ارتباط با سرور");
+      setLoading(false);
     }
-    router.push("/dashboard");
   }
 
   const inputClass =
@@ -47,51 +68,47 @@ export default function LoginPage() {
           راهکارهای ایمنی، سلامت و محیط زیست
         </p>
 
-        <div className="mb-4">
-          <label className="mb-2 block text-sm font-semibold">
-            نام کاربری
-          </label>
-          <input
-            type="text"
-            className={inputClass}
-            placeholder="نام کاربری خود را وارد کنید"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
+        <form onSubmit={handleLogin}>
+          <div className="mb-4">
+            <label className="mb-2 block text-sm font-semibold">
+              نام کاربری
+            </label>
+            <input
+              type="text"
+              className={inputClass}
+              placeholder="نام کاربری خود را وارد کنید"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
 
-        <div className="mb-4">
-          <label className="mb-2 block text-sm font-semibold">رمز عبور</label>
-          <input
-            type="password"
-            className={inputClass}
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-          />
-        </div>
+          <div className="mb-4">
+            <label className="mb-2 block text-sm font-semibold">رمز عبور</label>
+            <input
+              type="password"
+              className={inputClass}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        <div className="mb-5">
-          <label className="mb-2 block text-sm font-semibold">
-            نوع دسترسی
-          </label>
-          <select
-            className={inputClass}
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
+          {error && (
+            <div className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-xl bg-gradient-to-br from-[#0f2c4c] to-[#2e7cc4] py-3.5 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 disabled:opacity-50"
           >
-            <option value="hse">پنل HSE (کارشناس ایمنی)</option>
-            <option value="manager">پنل مدیران</option>
-          </select>
-        </div>
-
-        <button
-          onClick={handleLogin}
-          className="w-full rounded-xl bg-gradient-to-br from-[#0f2c4c] to-[#2e7cc4] py-3.5 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5"
-        >
-          ورود به سیستم
-        </button>
+            {loading ? "⏳ در حال ورود..." : "ورود به سیستم"}
+          </button>
+        </form>
       </div>
     </div>
   );

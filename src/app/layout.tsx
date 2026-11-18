@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: "سیستم جامع HSE - ایمن‌سازان هستی گستر",
@@ -24,7 +25,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-[Vazirmatn] bg-[#f0f4f8] text-[#1e293b]">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

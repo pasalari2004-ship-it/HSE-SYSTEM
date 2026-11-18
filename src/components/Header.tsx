@@ -1,13 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 export default function Header() {
-  const router = useRouter();
-
-  function handleLogout() {
+  async function handleLogout() {
     if (confirm("از سیستم خارج می‌شوید؟")) {
-      router.push("/login");
+      await signOut({ callbackUrl: "/login" });
     }
   }
 
