@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { menuData } from "@/app/data/menu";
+import { menuData } from "@/data/menu";
 
 export default function Sidebar() {
   const [openItems, setOpenItems] = useState<string[]>([]);

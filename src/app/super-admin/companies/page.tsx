@@ -26,12 +26,13 @@ export default async function CompaniesListPage() {
               <th className="px-6 py-4 font-semibold text-slate-600">حوزه فعالیت</th>
               <th className="px-6 py-4 font-semibold text-slate-600">وضعیت</th>
               <th className="px-6 py-4 font-semibold text-slate-600">تاریخ ثبت</th>
+              <th className="px-6 py-4 font-semibold text-slate-600">عملیات</th>
             </tr>
           </thead>
           <tbody>
             {companies.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-slate-500">
+                <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
                   هیچ شرکتی ثبت نشده است.
                 </td>
               </tr>
@@ -47,6 +48,11 @@ export default async function CompaniesListPage() {
                   </td>
                   <td className="px-6 py-4 text-slate-500">
                     {new Date(c.createdAt).toLocaleDateString("fa-IR")}
+                  </td>
+                  <td className="px-6 py-4">
+                    <Link href={`/super-admin/companies/${c.id}`} className="text-[#2e7cc4] font-semibold hover:underline text-sm">
+                      مدیریت ماژول‌ها
+                    </Link>
                   </td>
                 </tr>
               ))
