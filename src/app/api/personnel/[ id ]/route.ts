@@ -1,51 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+    if (!companyId) return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+
     const url = new URL(request.url);
     const id = parseInt(url.pathname.split("/").pop() || "");
 
     if (isNaN(id)) {
-      return NextResponse.json(
-        { success: false, error: "شناسه نامعتبر" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: "شناسه نامعتبر" }, { status: 400 });
     }
 
-    const personnel = await prisma.personnel.findUnique({
-      where: { id },
+    // فقط رکوردی رو پیدا کن که هم id داشته باشه هم companyId
+    const personnel = await prisma.personnel.findFirst({
+      where: { id, companyId },
     });
 
     if (!personnel) {
-      return NextResponse.json(
-        { success: false, error: "کارمند یافت نشد" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "کارمند یافت نشد" }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, data: personnel });
   } catch (error) {
     console.error("GET Error:", error);
-    return NextResponse.json(
-      { success: false, error: "خطا در دریافت اطلاعات" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "خطا در دریافت اطلاعات" }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+    if (!companyId) return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+
     const url = new URL(request.url);
     const id = parseInt(url.pathname.split("/").pop() || "");
 
     if (isNaN(id)) {
-      return NextResponse.json(
-        { success: false, error: "شناسه نامعتبر" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: "شناسه نامعتبر" }, { status: 400 });
+    }
+
+    // اول چک کن آیا این رکورد برای این شرکته یا نه
+    const existing = await prisma.personnel.findFirst({ where: { id, companyId } });
+    if (!existing) {
+      return NextResponse.json({ success: false, error: "کارمند یافت نشد" }, { status: 404 });
     }
 
     const body = await request.json();
@@ -99,61 +101,39 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ success: true, data: personnel });
   } catch (error: any) {
     console.error("PUT Error:", error);
-
     if (error.code === "P2002") {
-      return NextResponse.json(
-        { success: false, error: "کد پرسنلی یا کد ملی تکراری است" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: "کد پرسنلی یا کد ملی تکراری است" }, { status: 400 });
     }
-
-    if (error.code === "P2025") {
-      return NextResponse.json(
-        { success: false, error: "کارمند یافت نشد" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: false, error: "خطا در بروزرسانی اطلاعات" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "خطا در بروزرسانی اطلاعات" }, { status: 500 });
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+    if (!companyId) return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+
     const url = new URL(request.url);
     const id = parseInt(url.pathname.split("/").pop() || "");
 
     if (isNaN(id)) {
-      return NextResponse.json(
-        { success: false, error: "شناسه نامعتبر" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: "شناسه نامعتبر" }, { status: 400 });
+    }
+
+    // چک کن که این رکورد مال همین شرکت باشه
+    const existing = await prisma.personnel.findFirst({ where: { id, companyId } });
+    if (!existing) {
+      return NextResponse.json({ success: false, error: "کارمند یافت نشد" }, { status: 404 });
     }
 
     await prisma.personnel.delete({
       where: { id },
     });
 
-    return NextResponse.json({
-      success: true,
-      message: "کارمند با موفقیت حذف شد",
-    });
+    return NextResponse.json({ success: true, message: "کارمند با موفقیت حذف شد" });
   } catch (error: any) {
     console.error("DELETE Error:", error);
-
-    if (error.code === "P2025") {
-      return NextResponse.json(
-        { success: false, error: "کارمند یافت نشد" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: false, error: "خطا در حذف کارمند" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "خطا در حذف کارمند" }, { status: 500 });
   }
 }

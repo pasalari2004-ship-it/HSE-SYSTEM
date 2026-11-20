@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+
+    if (!companyId) {
+      return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+    }
+
     const accidents = await prisma.accident.findMany({
+      where: { companyId },
       orderBy: { createdAt: "desc" },
       include: {
         personnel: {
@@ -17,34 +24,35 @@ export async function GET() {
         },
       },
     });
+    
     return NextResponse.json({ success: true, data: accidents });
   } catch (error) {
     console.error("GET Error:", error);
-    return NextResponse.json(
-      { success: false, error: "خطا در دریافت اطلاعات" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "خطا در دریافت اطلاعات" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+
+    if (!companyId) {
+      return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+    }
+
     const body = await request.json();
 
     if (!body.victimName || !body.victimName.trim()) {
-      return NextResponse.json(
-        { success: false, error: "نام حادثه‌دیده الزامی است" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: "نام حادثه‌دیده الزامی است" }, { status: 400 });
     }
 
-    const count = await prisma.accident.count();
-    const accidentCode = `ACC-${new Date().getFullYear()}-${String(
-      count + 1
-    ).padStart(4, "0")}`;
+    const count = await prisma.accident.count({ where: { companyId } });
+    const accidentCode = `ACC-${new Date().getFullYear()}-${String(count + 1).padStart(4, "0")}`;
 
     const accident = await prisma.accident.create({
       data: {
+        companyId,
         accidentCode,
         personnelCode: body.personnelCode || null,
         victimName: body.victimName,
@@ -81,9 +89,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, data: accident });
   } catch (error: any) {
     console.error("POST Error:", error);
-    return NextResponse.json(
-      { success: false, error: "خطا در ذخیره اطلاعات" },
-      { status: 500 }
-    );
+    if (error.code === "P2002") {
+      return NextResponse.json({ success: false, error: "کد حادثه تکراری است" }, { status: 400 });
+    }
+    return NextResponse.json({ success: false, error: "خطا در ذخیره اطلاعات" }, { status: 500 });
   }
 }

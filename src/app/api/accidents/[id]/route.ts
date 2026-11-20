@@ -1,70 +1,54 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+    if (!companyId) return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+
     const url = new URL(request.url);
     const id = parseInt(url.pathname.split("/").pop() || "");
+    if (isNaN(id)) return NextResponse.json({ success: false, error: "شناسه نامعتبر" }, { status: 400 });
 
-    if (isNaN(id)) {
-      return NextResponse.json(
-        { success: false, error: "شناسه نامعتبر" },
-        { status: 400 }
-      );
-    }
-
-    const accident = await prisma.accident.findUnique({
-      where: { id },
+    const accident = await prisma.accident.findFirst({
+      where: { id, companyId },
       include: {
         personnel: {
-          select: {
-            fullName: true,
-            unit: true,
-            position: true,
-            mobile: true,
-          },
+          select: { fullName: true, unit: true, position: true, mobile: true },
         },
       },
     });
 
     if (!accident) {
-      return NextResponse.json(
-        { success: false, error: "حادثه یافت نشد" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "حادثه یافت نشد" }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, data: accident });
   } catch (error) {
     console.error("GET Error:", error);
-    return NextResponse.json(
-      { success: false, error: "خطا در دریافت اطلاعات" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "خطا در دریافت اطلاعات" }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+    if (!companyId) return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+
     const url = new URL(request.url);
     const id = parseInt(url.pathname.split("/").pop() || "");
+    if (isNaN(id)) return NextResponse.json({ success: false, error: "شناسه نامعتبر" }, { status: 400 });
 
-    if (isNaN(id)) {
-      return NextResponse.json(
-        { success: false, error: "شناسه نامعتبر" },
-        { status: 400 }
-      );
-    }
+    const existing = await prisma.accident.findFirst({ where: { id, companyId } });
+    if (!existing) return NextResponse.json({ success: false, error: "حادثه یافت نشد" }, { status: 404 });
 
     const body = await request.json();
 
     if (!body.victimName || !body.victimName.trim()) {
-      return NextResponse.json(
-        { success: false, error: "نام حادثه‌دیده الزامی است" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: "نام حادثه‌دیده الزامی است" }, { status: 400 });
     }
 
     const accident = await prisma.accident.update({
@@ -105,54 +89,28 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ success: true, data: accident });
   } catch (error: any) {
     console.error("PUT Error:", error);
-
-    if (error.code === "P2025") {
-      return NextResponse.json(
-        { success: false, error: "حادثه یافت نشد" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: false, error: "خطا در بروزرسانی اطلاعات" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "خطا در بروزرسانی اطلاعات" }, { status: 500 });
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+    if (!companyId) return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+
     const url = new URL(request.url);
     const id = parseInt(url.pathname.split("/").pop() || "");
+    if (isNaN(id)) return NextResponse.json({ success: false, error: "شناسه نامعتبر" }, { status: 400 });
 
-    if (isNaN(id)) {
-      return NextResponse.json(
-        { success: false, error: "شناسه نامعتبر" },
-        { status: 400 }
-      );
-    }
+    const existing = await prisma.accident.findFirst({ where: { id, companyId } });
+    if (!existing) return NextResponse.json({ success: false, error: "حادثه یافت نشد" }, { status: 404 });
 
-    await prisma.accident.delete({
-      where: { id },
-    });
+    await prisma.accident.delete({ where: { id } });
 
-    return NextResponse.json({
-      success: true,
-      message: "حادثه با موفقیت حذف شد",
-    });
+    return NextResponse.json({ success: true, message: "حادثه با موفقیت حذف شد" });
   } catch (error: any) {
     console.error("DELETE Error:", error);
-
-    if (error.code === "P2025") {
-      return NextResponse.json(
-        { success: false, error: "حادثه یافت نشد" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: false, error: "خطا در حذف حادثه" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "خطا در حذف حادثه" }, { status: 500 });
   }
 }

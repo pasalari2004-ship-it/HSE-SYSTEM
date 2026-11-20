@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+
+    if (!companyId) {
+      return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+    }
+
+    // فقط پرسنلِ همین شرکت رو برگردون
     const personnel = await prisma.personnel.findMany({
+      where: { companyId },
       orderBy: { createdAt: "desc" },
     });
+    
     return NextResponse.json({ success: true, data: personnel });
   } catch (error) {
     console.error("Error fetching personnel:", error);
@@ -20,10 +29,18 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+
+    if (!companyId) {
+      return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+    }
+
     const body = await request.json();
 
     const personnel = await prisma.personnel.create({
       data: {
+        companyId, // 👈 اتصال به شرکتِ کاربرِ لاگین‌شده
         personnelCode: body.personnelCode,
         fullName: body.fullName,
         nationalCode: body.nationalCode,

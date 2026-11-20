@@ -1,29 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+
+    if (!companyId) {
+      return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+    }
+
     const interviews = await prisma.interview.findMany({
+      where: { companyId },
       orderBy: { createdAt: "desc" },
     });
+    
     return NextResponse.json({ success: true, data: interviews });
   } catch (error) {
     console.error("GET Error:", error);
-    return NextResponse.json(
-      { success: false, error: "خطا در دریافت اطلاعات" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "خطا در دریافت اطلاعات" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+
+    if (!companyId) {
+      return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+    }
+
     const body = await request.json();
 
     const interview = await prisma.interview.create({
       data: {
+        companyId,
         fullName: body.fullName,
         position: body.position || null,
         birthDate: body.birthDate || null,
@@ -60,9 +73,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, data: interview });
   } catch (error: any) {
     console.error("POST Error:", error);
-    return NextResponse.json(
-      { success: false, error: "خطا در ذخیره اطلاعات" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "خطا در ذخیره اطلاعات" }, { status: 500 });
   }
 }

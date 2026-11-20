@@ -1,61 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+    if (!companyId) return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+
     const url = new URL(request.url);
     const id = parseInt(url.pathname.split("/").pop() || "");
+    if (isNaN(id)) return NextResponse.json({ success: false, error: "شناسه نامعتبر" }, { status: 400 });
 
-    if (isNaN(id)) {
-      return NextResponse.json(
-        { success: false, error: "شناسه نامعتبر" },
-        { status: 400 }
-      );
-    }
-
-    const guideline = await prisma.guideline.findUnique({
-      where: { id },
+    const guideline = await prisma.guideline.findFirst({
+      where: { id, companyId },
     });
 
     if (!guideline) {
-      return NextResponse.json(
-        { success: false, error: "دستورالعمل یافت نشد" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "دستورالعمل یافت نشد" }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, data: guideline });
   } catch (error) {
     console.error("GET Error:", error);
-    return NextResponse.json(
-      { success: false, error: "خطا در دریافت اطلاعات" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "خطا در دریافت اطلاعات" }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+    if (!companyId) return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+
     const url = new URL(request.url);
     const id = parseInt(url.pathname.split("/").pop() || "");
+    if (isNaN(id)) return NextResponse.json({ success: false, error: "شناسه نامعتبر" }, { status: 400 });
 
-    if (isNaN(id)) {
-      return NextResponse.json(
-        { success: false, error: "شناسه نامعتبر" },
-        { status: 400 }
-      );
-    }
+    const existing = await prisma.guideline.findFirst({ where: { id, companyId } });
+    if (!existing) return NextResponse.json({ success: false, error: "دستورالعمل یافت نشد" }, { status: 404 });
 
     const body = await request.json();
-
-    if (!body.title || !body.title.trim()) {
-      return NextResponse.json(
-        { success: false, error: "عنوان دستورالعمل الزامی است" },
-        { status: 400 }
-      );
-    }
 
     const guideline = await prisma.guideline.update({
       where: { id },
@@ -77,54 +62,28 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ success: true, data: guideline });
   } catch (error: any) {
     console.error("PUT Error:", error);
-
-    if (error.code === "P2025") {
-      return NextResponse.json(
-        { success: false, error: "دستورالعمل یافت نشد" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: false, error: "خطا در بروزرسانی اطلاعات" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "خطا در بروزرسانی اطلاعات" }, { status: 500 });
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
+    const session = await auth();
+    const companyId = (session?.user as any)?.companyId;
+    if (!companyId) return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
+
     const url = new URL(request.url);
     const id = parseInt(url.pathname.split("/").pop() || "");
+    if (isNaN(id)) return NextResponse.json({ success: false, error: "شناسه نامعتبر" }, { status: 400 });
 
-    if (isNaN(id)) {
-      return NextResponse.json(
-        { success: false, error: "شناسه نامعتبر" },
-        { status: 400 }
-      );
-    }
+    const existing = await prisma.guideline.findFirst({ where: { id, companyId } });
+    if (!existing) return NextResponse.json({ success: false, error: "دستورالعمل یافت نشد" }, { status: 404 });
 
-    await prisma.guideline.delete({
-      where: { id },
-    });
+    await prisma.guideline.delete({ where: { id } });
 
-    return NextResponse.json({
-      success: true,
-      message: "دستورالعمل با موفقیت حذف شد",
-    });
+    return NextResponse.json({ success: true, message: "دستورالعمل با موفقیت حذف شد" });
   } catch (error: any) {
     console.error("DELETE Error:", error);
-
-    if (error.code === "P2025") {
-      return NextResponse.json(
-        { success: false, error: "دستورالعمل یافت نشد" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: false, error: "خطا در حذف دستورالعمل" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "خطا در حذف اطلاعات" }, { status: 500 });
   }
 }
