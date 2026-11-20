@@ -18,10 +18,17 @@ export default async function LandingPage() {
     take: 6,
   });
 
+  // دریافت تنظیمات از دیتابیس
+  const settingsData = await prisma.siteSetting.findMany();
+  const settings: Record<string, string> = {};
+  settingsData.forEach((item) => {
+    settings[item.key] = item.value;
+  });
+
   return (
     <div className="min-h-screen bg-white font-sans text-slate-800" dir="rtl">
       
-      {/* هدر سفید */}
+      {/* هدر */}
       <header className="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center">
@@ -50,9 +57,9 @@ export default async function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col items-start justify-center min-h-[400px]">
           <span className="text-red-500 font-bold mb-4 text-sm tracking-widest">ایمنی امروز، آرامش فردا</span>
           <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
-            ایمن‌سازان <span className="text-red-500">هستی گستر</span>
+            {settings.heroTitle || "ایمن‌سازان هستی گستر"}
           </h1>
-          <p className="text-xl text-slate-200 font-semibold mb-4">راهکارهای ایمنی، سلامت و محیط زیست</p>
+          <p className="text-xl text-slate-200 font-semibold mb-4">{settings.heroSubtitle || "راهکارهای ایمنی، سلامت و محیط زیست"}</p>
           <p className="text-slate-400 max-w-xl mb-8 leading-relaxed">
             ارائه راهکارهای نوین و استاندارد در حوزه HSE برای سازمان‌ها و صنایع پیشرو کشور.
           </p>
@@ -68,7 +75,7 @@ export default async function LandingPage() {
       </section>
 
       {/* نوار آمار شناور */}
-      <section className="relative max-w-7xl mx-auto px-6 -mt-8 z-10">
+      <section className="relative max-w-7xl mx-auto px-6 -mt-16 z-10">
         <div className="bg-white rounded-2xl shadow-xl p-6 flex flex-wrap justify-between items-center gap-6 border border-slate-100">
           <div className="flex items-center gap-3"><span className="text-2xl">🛡️</span><div><p className="font-bold text-[#0a1f38]">تعهد به کیفیت</p><p className="text-xs text-slate-500">و استانداردهای بین‌المللی</p></div></div>
           <div className="flex items-center gap-3"><span className="text-2xl">👥</span><div><p className="font-bold text-[#0a1f38]">تیم متخصص</p><p className="text-xs text-slate-500">و مجرب</p></div></div>
@@ -77,7 +84,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* بخش درباره ما (بدون عکس و فقط با گرادیانت) */}
+      {/* بخش درباره ما */}
       <section id="about" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br from-[#0a1f38] to-[#1e4d7b]">
@@ -86,7 +93,7 @@ export default async function LandingPage() {
           <div>
             <h2 className="text-3xl font-extrabold text-[#0a1f38] mb-6">درباره ایمن‌سازان هستی گستر</h2>
             <p className="text-slate-600 leading-relaxed mb-6">
-              ما در ایمن‌سازان هستی گستر با تکیه بر دانش تخصصی، تجربه عملی و تعهد به کیفیت، در کنار سازمان‌ها هستیم تا محیطی ایمن، سالم و پایدار برای آینده بسازیم.
+              {settings.aboutText || "ما در ایمن‌سازان هستی گستر با تکیه بر دانش تخصصی، تجربه عملی و تعهد به کیفیت، در کنار سازمان‌ها هستیم تا محیطی ایمن، سالم و پایدار برای آینده بسازیم."}
             </p>
             <Link href="#" className="bg-red-600 text-white font-bold px-8 py-3 rounded-full hover:bg-red-700 transition inline-block shadow-md">
               درباره ما بیشتر بدانید
@@ -147,10 +154,13 @@ export default async function LandingPage() {
               <h3 className="text-2xl font-bold text-white mb-2">برای ساخت محیطی ایمن، سالم و پایدار</h3>
               <p className="text-slate-300">همین امروز با ما در ارتباط باشید.</p>
             </div>
-            <Link href="#" className="bg-red-600 text-white font-bold px-8 py-3.5 rounded-full hover:bg-red-700 transition flex items-center gap-2 whitespace-nowrap shadow-lg">
-              تماس با ما
-              <span>←</span>
-            </Link>
+            <div className="flex flex-col md:flex-row items-center gap-4">
+               {settings.phone && <span className="text-white font-bold text-lg">{settings.phone}</span>}
+               <Link href={`mailto:${settings.email || ""}`} className="bg-red-600 text-white font-bold px-8 py-3.5 rounded-full hover:bg-red-700 transition flex items-center gap-2 whitespace-nowrap shadow-lg">
+                 تماس با ما
+                 <span>←</span>
+               </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -171,9 +181,9 @@ export default async function LandingPage() {
             <Link href="#contact" className="hover:text-white transition">تماس</Link>
           </nav>
           <div className="flex gap-3">
-            <span className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/10 transition">in</span>
-            <span className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/10 transition">✈️</span>
-            <span className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/10 transition">📷</span>
+             {settings.instagram && <a href={settings.instagram} target="_blank" rel="noreferrer" className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/10 transition">📷</a>}
+             {settings.linkedin && <a href={settings.linkedin} target="_blank" rel="noreferrer" className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/10 transition">in</a>}
+             {settings.telegram && <a href={settings.telegram} target="_blank" rel="noreferrer" className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/10 transition">✈️</a>}
           </div>
         </div>
         <div className="text-center text-xs text-slate-600 border-t border-white/10 pt-6">

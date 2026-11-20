@@ -51,6 +51,9 @@ export default async function SuperAdminLayout({
             <Link href="/super-admin/companies" className="px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100 font-medium">
               مدیریت شرکت‌ها
             </Link>
+            <Link href="/super-admin/settings" className="px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100 font-medium">
+              تنظیمات صفحه اصلی
+            </Link>
           </nav>
         </aside>
 

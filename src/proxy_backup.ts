@@ -22,8 +22,9 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const role = (req.auth?.user as any)?.role as string | undefined;
 
-  // ۱. اگر کاربر لاگین کرده و می‌خواد بره /login یا / → بفرستش پنل خودش
+  // ۱. اجازه بده صفحه لاگین و صفحه اصلی همیشه باز بشن (بدون هیچ شرطی)
   if (pathname === "/login" || pathname === "/") {
+    // فقط اگر کاربر لاگین کرده، بفرستش پنل خودش
     if (isLoggedIn && role) {
       const home = ROLE_HOME[role] ?? "/dashboard";
       return NextResponse.redirect(new URL(home, req.nextUrl));
@@ -31,7 +32,7 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // ۲. اگه مسیر محافظت‌شده‌ست و کاربر لاگین نکرده → /login
+  // ۲. اگر مسیر محافظت‌شده‌ست و کاربر لاگین نکرده → بفرست به /login
   const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
   if (isProtected && !isLoggedIn) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
@@ -63,7 +64,6 @@ export default auth((req) => {
 
 export const config = {
   matcher: [
-    "/",
     "/dashboard/:path*",
     "/personnel/:path*",
     "/accidents/:path*",
