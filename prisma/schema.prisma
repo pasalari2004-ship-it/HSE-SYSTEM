@@ -30,7 +30,7 @@ model Company {
   accidents   Accident[]
   news        News[]
   guidelines  Guideline[]
-  interviews  Interview[]  // 👈 این خط اضافه شد
+  interviews  Interview[]
 
   @@map("companies")
 }
@@ -40,8 +40,9 @@ model CompanyModule {
   companyId   Int
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   moduleId    String
+  subModuleId String?  // 👈 اضافه شد
   
-  @@unique([companyId, moduleId])
+  @@unique([companyId, moduleId, subModuleId])
   @@map("company_modules")
 }
 
@@ -65,12 +66,13 @@ model User {
 }
 
 model UserPermission {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  moduleId   String
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleId    String
+  subModuleId String?  // 👈 اضافه شد
   
-  @@unique([userId, moduleId])
+  @@unique([userId, moduleId, subModuleId])
   @@map("user_permissions")
 }
 
@@ -144,8 +146,8 @@ model Personnel {
 
 model Interview {
   id                   Int      @id @default(autoincrement())
-  companyId            Int?  // 👈 اضافه شد
-  company              Company? @relation(fields: [companyId], references: [id], onDelete: Cascade) // 👈 اضافه شد
+  companyId            Int?
+  company              Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
   
   fullName             String
   position             String?
@@ -262,6 +264,7 @@ model News {
 
   @@map("news")
 }
+
 model SiteSetting {
   id        Int      @id @default(autoincrement())
   key       String   @unique

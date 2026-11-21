@@ -18,15 +18,10 @@ export default async function EditCompanyPage({ params }: { params: Promise<{ id
 
   if (!company) return notFound();
 
-  const allModules = menuData.flatMap(cat => cat.items.map(item => ({
-    id: item.id,
-    title: item.title,
-    icon: item.icon
-  })));
-
+  // شناسه ماژول‌های اصلی و زیرمنوهایی که شرکت الان دسترسی داره
   const activeModuleIds = company.modules.map(m => m.moduleId);
+  const activeSubModuleIds = company.modules.filter(m => m.subModuleId).map(m => m.subModuleId as string);
 
-  // استفاده از bind برای پاس دادن companyId به اکشن
   const saveAction = saveCompanyModules.bind(null, companyId);
 
   return (
@@ -41,20 +36,46 @@ export default async function EditCompanyPage({ params }: { params: Promise<{ id
       </div>
 
       <form action={saveAction}>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-          {allModules.map((mod) => (
-            <label key={mod.id} className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
-              <input 
-                type="checkbox" 
-                name="modules" 
-                value={mod.id}
-                defaultChecked={activeModuleIds.includes(mod.id)}
-                className="w-5 h-5 text-[#2e7cc4] rounded focus:ring-[#2e7cc4]"
-              />
-              <span className="text-slate-700 font-medium">
-                {mod.icon} {mod.title}
-              </span>
-            </label>
+        <div className="flex flex-col gap-6 mb-8">
+          {menuData.map((category, idx) => (
+            <div key={idx} className="border border-slate-200 rounded-xl p-4">
+              <h3 className="font-bold text-slate-700 mb-4 border-b pb-2">{category.category}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {category.items.map((mod) => (
+                  <div key={mod.id} className="flex flex-col gap-2 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    {/* ماژول اصلی */}
+                    <label className="flex items-center gap-3 font-semibold text-slate-800 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        name="modules" 
+                        value={mod.id}
+                        defaultChecked={activeModuleIds.includes(mod.id)}
+                        className="w-5 h-5 text-[#2e7cc4] rounded focus:ring-[#2e7cc4]"
+                      />
+                      <span>{mod.icon} {mod.title}</span>
+                    </label>
+
+                    {/* زیرمنوها */}
+                    {mod.submenu.length > 0 && (
+                      <div className="mr-8 flex flex-col gap-2 mt-2 border-r-2 border-slate-200 pr-4">
+                        {mod.submenu.map((sub) => (
+                          <label key={sub.id} className="flex items-center gap-3 text-sm text-slate-600 cursor-pointer">
+                            <input 
+                              type="checkbox" 
+                              name="modules" 
+                              value={`sub-${sub.id}`}
+                              defaultChecked={activeSubModuleIds.includes(sub.id)}
+                              className="w-4 h-4 text-[#2e7cc4] rounded focus:ring-[#2e7cc4]"
+                            />
+                            <span>{sub.icon} {sub.name}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
 
