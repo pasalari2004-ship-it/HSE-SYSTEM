@@ -31,7 +31,8 @@ model Company {
   news        News[]
   guidelines  Guideline[]
   interviews  Interview[]
-  accidentAnalyses AccidentAnalysis[]  // 👈 اضافه شد
+  accidentAnalyses AccidentAnalysis[]
+  workHours   WorkHours[]        // 👈 اضافه شد
 
   @@map("companies")
 }
@@ -247,7 +248,7 @@ model Accident {
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
 
-  analysis              AccidentAnalysis?  // 👈 اضافه شد
+  analysis              AccidentAnalysis?
 
   @@map("accidents")
 }
@@ -308,4 +309,20 @@ model AccidentAnalysis {
   updatedAt            DateTime @updatedAt
 
   @@map("accident_analyses")
+}
+
+model WorkHours {          // 👈 اضافه شد
+  id           Int      @id @default(autoincrement())
+  companyId    Int?
+  company      Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  year         Int
+  month        Int
+  totalHours   Int      @default(0)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([companyId, year, month])
+  @@map("work_hours")
 }
