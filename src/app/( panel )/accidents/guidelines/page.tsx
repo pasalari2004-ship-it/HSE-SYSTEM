@@ -31,7 +31,8 @@ export default function GuidelinesListPage() {
       const res = await fetch("/api/guidelines");
       const data = await res.json();
       if (data.success) {
-        setGuidelines(data.data);
+        // 👈 فیلتر کردن دستورالعمل‌های ریسک
+        setGuidelines(data.data.filter((g: any) => g.category !== "ریسک"));
       }
     } catch (error) {
       console.error("Error:", error);

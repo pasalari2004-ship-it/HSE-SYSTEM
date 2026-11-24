@@ -59,7 +59,7 @@ export const menuData: MenuCategory[] = [
           { id: "accidents-board", name: "تابلو حوادث", icon: "📋", href: "/accidents/board" },
           { id: "accidents-chart-yearly", name: "نمودار حوادث سالانه", icon: "📈", href: "/accidents/chart-yearly" },
           { id: "accidents-report", name: "گزارش حوادث", icon: "📄", href: "/accidents/report" },
-          { id: "accidents-chart-compare", name: "نمودار مقایسه‌ای", icon: "📉", href: "/accidents/chart-compare" }, // 👈 لینک اینجا اضافه شد
+          { id: "accidents-chart-compare", name: "نمودار مقایسه‌ای", icon: "📉", href: "/accidents/chart-compare" },
         ],
       },
       {
@@ -68,7 +68,7 @@ export const menuData: MenuCategory[] = [
         title: "مدیریت ریسک",
         desc: "شناسایی و ارزیابی ریسک‌ها",
         submenu: [
-          { id: "risk-guidelines", name: "دستورالعمل ریسک‌ها", icon: "📖" },
+          { id: "risk-guidelines", name: "دستورالعمل ریسک‌ها", icon: "📖", href: "/risk/guidelines" }, // 👈 لینک اضافه شد
           { id: "risk-identified", name: "ثبت خطرات شناسایی‌شده", icon: "📝" },
           { id: "risk-fmea", name: "ارزیابی ریسک به روش FMEA", icon: "🔬" },
           { id: "risk-jsa", name: "ارزیابی ریسک به روش JSA", icon: "🔬" },
