@@ -56,7 +56,7 @@ export const menuData: MenuCategory[] = [
           { id: "accidents-records", name: "ثبت حوادث و بیماری‌های شغلی", icon: "📝", href: "/accidents/records" },
           { id: "accidents-analysis", name: "تجزیه و تحلیل حوادث", icon: "🔍", href: "/accidents/analysis" },
           { id: "accidents-index", name: "شاخص حوادث", icon: "📊", href: "/accidents/indicators" },
-          { id: "accidents-board", name: "تابلو حوادث", icon: "📋" },
+          { id: "accidents-board", name: "تابلو حوادث", icon: "📋", href: "/accidents/board" },
           { id: "accidents-chart-yearly", name: "نمودار حوادث سالانه", icon: "📈" },
           { id: "accidents-report", name: "گزارش حوادث", icon: "📄" },
           { id: "accidents-chart-compare", name: "نمودار مقایسه‌ای", icon: "📉" },
