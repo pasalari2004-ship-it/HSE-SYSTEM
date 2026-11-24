@@ -68,9 +68,9 @@ export const menuData: MenuCategory[] = [
         title: "مدیریت ریسک",
         desc: "شناسایی و ارزیابی ریسک‌ها",
         submenu: [
-          { id: "risk-guidelines", name: "دستورالعمل ریسک‌ها", icon: "📖", href: "/risk/guidelines" }, // 👈 لینک اضافه شد
-          { id: "risk-identified", name: "ثبت خطرات شناسایی‌شده", icon: "📝" },
-          { id: "risk-fmea", name: "ارزیابی ریسک به روش FMEA", icon: "🔬" },
+          { id: "risk-guidelines", name: "دستورالعمل ریسک‌ها", icon: "📖", href: "/risk/guidelines" },
+          { id: "risk-identified", name: "ثبت خطرات شناسایی‌شده", icon: "📝", href: "/risk/identified" },
+          { id: "risk-fmea", name: "ارزیابی ریسک به روش FMEA", icon: "🔬", href: "/risk/fmea" }, // 👈 لینک اضافه شد
           { id: "risk-jsa", name: "ارزیابی ریسک به روش JSA", icon: "🔬" },
           { id: "risk-nonconformity-issue", name: "صدور عدم انطباق", icon: "⚠️" },
           { id: "risk-nonconformity-record", name: "ثبت عدم انطباق", icon: "📝" },

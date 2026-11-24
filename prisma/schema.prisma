@@ -32,7 +32,9 @@ model Company {
   guidelines  Guideline[]
   interviews  Interview[]
   accidentAnalyses AccidentAnalysis[]
-  workHours   WorkHours[]        // 👈 اضافه شد
+  workHours   WorkHours[]
+  risks       Risk[]
+  fmeas       Fmea[]           
 
   @@map("companies")
 }
@@ -311,7 +313,7 @@ model AccidentAnalysis {
   @@map("accident_analyses")
 }
 
-model WorkHours {          // 👈 اضافه شد
+model WorkHours {
   id           Int      @id @default(autoincrement())
   companyId    Int?
   company      Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
@@ -325,4 +327,67 @@ model WorkHours {          // 👈 اضافه شد
 
   @@unique([companyId, year, month])
   @@map("work_hours")
+}
+
+model Risk {
+  id              Int      @id @default(autoincrement())
+  companyId       Int?
+  company         Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  title           String
+  description     String?  @db.Text
+  location        String?  
+  activity        String?  
+  
+  probability     Int      @default(1) 
+  severity        Int      @default(1) 
+  riskLevel       Int      @default(1) 
+  
+  controlMeasures String?  @db.Text 
+  responsible     String?  
+  deadline        String?  
+  
+  status          String   @default("باز") 
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("risks")
+}
+
+model Fmea {
+  id                Int      @id @default(autoincrement())
+  companyId         Int?
+  company           Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  processName       String   // عملکرد فرآیند
+  failureMode       String   // حالات خرابی بالقوه
+  failureEffect     String?  @db.Text // تاثیرات بالقوه خرابی
+  failureCause      String?  @db.Text // علل بالقوه خرابی
+  currentControls   String?  @db.Text // کنترل‌های موجود فرآیند
+  
+  severity          Int      @default(1) // S (1-10)
+  occurrence        Int      @default(1) // O (1-10)
+  detection         Int      @default(1) // D (1-10)
+  rpn               Int      @default(1) // RPN = S × O × D
+  
+  rpl               String?  @default("کم اهمیت") // 👈 سطح اولویت ریسک اضافه شد
+  strategy          String?  @default("کاهش ریسک") // 👈 استراتژی برخورد اضافه شد
+  
+  recommendedAction String?  @db.Text // اقدامات پیشنهادشده
+  responsible       String?  // مسئولیت
+  deadline          String?  // تاریخ تکمیل
+  
+  // نتایج اقدامات (پس از انجام اقدامات اصلاحی)
+  newSeverity       Int?     // S جدید
+  newOccurrence     Int?     // O جدید
+  newDetection      Int?     // D جدید
+  newRpn            Int?     // RPN جدید
+  
+  status            String   @default("باز")
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("fmeas")
 }
