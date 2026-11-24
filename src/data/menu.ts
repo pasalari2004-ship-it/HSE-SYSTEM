@@ -57,9 +57,9 @@ export const menuData: MenuCategory[] = [
           { id: "accidents-analysis", name: "تجزیه و تحلیل حوادث", icon: "🔍", href: "/accidents/analysis" },
           { id: "accidents-index", name: "شاخص حوادث", icon: "📊", href: "/accidents/indicators" },
           { id: "accidents-board", name: "تابلو حوادث", icon: "📋", href: "/accidents/board" },
-          { id: "accidents-chart-yearly", name: "نمودار حوادث سالانه", icon: "📈" },
-          { id: "accidents-report", name: "گزارش حوادث", icon: "📄" },
-          { id: "accidents-chart-compare", name: "نمودار مقایسه‌ای", icon: "📉" },
+          { id: "accidents-chart-yearly", name: "نمودار حوادث سالانه", icon: "📈", href: "/accidents/chart-yearly" },
+          { id: "accidents-report", name: "گزارش حوادث", icon: "📄", href: "/accidents/report" },
+          { id: "accidents-chart-compare", name: "نمودار مقایسه‌ای", icon: "📉", href: "/accidents/chart-compare" }, // 👈 لینک اینجا اضافه شد
         ],
       },
       {
