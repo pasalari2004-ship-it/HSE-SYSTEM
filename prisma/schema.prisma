@@ -34,7 +34,8 @@ model Company {
   accidentAnalyses AccidentAnalysis[]
   workHours   WorkHours[]
   risks       Risk[]
-  fmeas       Fmea[]           
+  fmeas       Fmea[]
+  nonConformities NonConformity[] // 👈 اضافه شد
 
   @@map("companies")
 }
@@ -360,29 +361,28 @@ model Fmea {
   companyId         Int?
   company           Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
   
-  processName       String   // عملکرد فرآیند
-  failureMode       String   // حالات خرابی بالقوه
-  failureEffect     String?  @db.Text // تاثیرات بالقوه خرابی
-  failureCause      String?  @db.Text // علل بالقوه خرابی
-  currentControls   String?  @db.Text // کنترل‌های موجود فرآیند
+  processName       String
+  failureMode       String
+  failureEffect     String?  @db.Text
+  failureCause      String?  @db.Text
+  currentControls   String?  @db.Text
   
-  severity          Int      @default(1) // S (1-10)
-  occurrence        Int      @default(1) // O (1-10)
-  detection         Int      @default(1) // D (1-10)
-  rpn               Int      @default(1) // RPN = S × O × D
+  severity          Int      @default(1)
+  occurrence        Int      @default(1)
+  detection         Int      @default(1)
+  rpn               Int      @default(1)
   
-  rpl               String?  @default("کم اهمیت") // 👈 سطح اولویت ریسک اضافه شد
-  strategy          String?  @default("کاهش ریسک") // 👈 استراتژی برخورد اضافه شد
+  rpl               String?  @default("کم اهمیت")
+  strategy          String?  @default("کاهش ریسک")
   
-  recommendedAction String?  @db.Text // اقدامات پیشنهادشده
-  responsible       String?  // مسئولیت
-  deadline          String?  // تاریخ تکمیل
+  recommendedAction String?  @db.Text
+  responsible       String?
+  deadline          String?
   
-  // نتایج اقدامات (پس از انجام اقدامات اصلاحی)
-  newSeverity       Int?     // S جدید
-  newOccurrence     Int?     // O جدید
-  newDetection      Int?     // D جدید
-  newRpn            Int?     // RPN جدید
+  newSeverity       Int?
+  newOccurrence     Int?
+  newDetection      Int?
+  newRpn            Int?
   
   status            String   @default("باز")
   
@@ -390,4 +390,49 @@ model Fmea {
   updatedAt         DateTime @updatedAt
 
   @@map("fmeas")
+}
+
+model NonConformity {
+  id                Int      @id @default(autoincrement())
+  companyId         Int?
+  company           Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  reportNumber      String?  // شماره گزارش (P-31)
+  reportDate        String?  // تاریخ گزارش
+  
+  factoryName       String?  // نام کارخانه/انبار
+  unitName          String?  // نام واحد
+  stationName       String?  // نام ایستگاه کار
+  
+  source            String?  // برگرفته از (ایمنی، بهداشتی، زیست محیطی)
+  ncType            String?  // نوع عدم انطباق (ثبت در ارزیابی ریسک، شرایط ناایمن، رفتار ناایمن)
+  
+  hazardDescription String?  @db.Text // شرح خطر/عدم انطباق
+  cause             String?  @db.Text // علت/علل خطر
+  consequence       String?  @db.Text // پیامد
+  legalRequirement  String?  @db.Text // الزام قانونی
+  hseAction         String?  @db.Text // اقدام پیشنهادی HSE
+  
+  severity          Int      @default(1) // شدت (1-5)
+  probability       Int      @default(1) // احتمال (1-5)
+  detection         Int      @default(1) // کشف (1-5)
+  rpl               String?  // سطح ریسک (قابل تحمل / غیرقابل تحمل)
+  
+  action1Responsible String? // مسئول اقدام ۱
+  action1Deadline    String? // مهلت اقدام ۱
+  action2Responsible String? // مسئول اقدام ۲
+  action2Deadline    String? // مهلت اقدام ۲
+  
+  actionReport      String?  @db.Text // گزارش مسئول اقدام اجرایی
+  managerAction     String?  @db.Text // شرح اقدام مصوب مدیر
+  effectiveness     String?  @db.Text // گزارش پیگیری و اجرا
+  
+  followUpName      String?  // نام مسئول پیگیری
+  
+  status            String   @default("باز") 
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("non_conformities")
 }
