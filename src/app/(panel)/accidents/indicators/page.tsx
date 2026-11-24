@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import IndicatorsTable from "./IndicatorsTable";
+import IndicatorsChart from "./IndicatorsChart";
 
 export default async function IndicatorsPage() {
   const session = await auth();
@@ -46,6 +47,9 @@ export default async function IndicatorsPage() {
       <h2 className="text-2xl font-bold text-slate-800 mb-6">شاخص‌های حوادث (OSHA / ILO)</h2>
       
       <IndicatorsTable initialData={monthsData} />
+      
+      {/* 👈 اضافه کردن نمودار */}
+      <IndicatorsChart data={monthsData} />
       
       <div className="mt-6 bg-blue-50 text-blue-800 p-4 rounded-xl border border-blue-200 text-sm">
         <p className="font-bold mb-2">راهنما:</p>
