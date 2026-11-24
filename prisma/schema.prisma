@@ -31,6 +31,7 @@ model Company {
   news        News[]
   guidelines  Guideline[]
   interviews  Interview[]
+  accidentAnalyses AccidentAnalysis[]  // 👈 اضافه شد
 
   @@map("companies")
 }
@@ -40,7 +41,7 @@ model CompanyModule {
   companyId   Int
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   moduleId    String
-  subModuleId String?  // 👈 اضافه شد
+  subModuleId String?
   
   @@unique([companyId, moduleId, subModuleId])
   @@map("company_modules")
@@ -70,7 +71,7 @@ model UserPermission {
   userId      Int
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   moduleId    String
-  subModuleId String?  // 👈 اضافه شد
+  subModuleId String?
   
   @@unique([userId, moduleId, subModuleId])
   @@map("user_permissions")
@@ -246,6 +247,8 @@ model Accident {
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
 
+  analysis              AccidentAnalysis?  // 👈 اضافه شد
+
   @@map("accidents")
 }
 
@@ -272,4 +275,37 @@ model SiteSetting {
   updatedAt DateTime @updatedAt
 
   @@map("site_settings")
+}
+
+model AccidentAnalysis {
+  id                   Int      @id @default(autoincrement())
+  companyId            Int?
+  company              Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  accidentId           Int      @unique
+  accident             Accident @relation(fields: [accidentId], references: [id], onDelete: Cascade)
+  
+  introduction         String?  @db.Text
+  directCause          String?  @db.Text
+  indirectCause        String?  @db.Text
+  basicCause           String?  @db.Text
+  rootCause            String?  @db.Text
+  
+  existingControls     String?  @db.Text
+  witnessStatement     String?  @db.Text
+  
+  managerName          String?
+  managerDate          String?
+  managerSignature     String?
+  
+  unitManagerName      String?
+  unitManagerDate      String?
+  unitManagerSignature String?
+  
+  hseRecommendations   String? @db.Text
+  
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("accident_analyses")
 }

@@ -48,7 +48,8 @@ export async function POST(request: NextRequest) {
     }
 
     const count = await prisma.accident.count({ where: { companyId } });
-    const accidentCode = `ACC-${new Date().getFullYear()}-${String(count + 1).padStart(4, "0")}`;
+    // 👈 اضافه کردن companyId به کد حادثه برای جلوگیری از تکرار
+    const accidentCode = `ACC-${companyId}-${new Date().getFullYear()}-${String(count + 1).padStart(4, "0")}`;
 
     const accident = await prisma.accident.create({
       data: {
